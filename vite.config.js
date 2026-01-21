@@ -7,28 +7,38 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192.png', 'icon-512.png'],
-      manifest: {
-        name: 'Wilan Week Planner',
-        short_name: 'WilanPlanner',
-        description: 'Personal weekly todo planner with timers',
-        theme_color: '#e91e63',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
-  {
-    src: 'logo192x192.png',
-    sizes: '192x192',
-    type: 'image/png',
-  },
-  {
-    src: 'logo512x512.png',
-    sizes: '512x512',
-    type: 'image/png',
-  },
-]
+      injectRegister: 'auto',
 
+      // 👇 THIS is the key part
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,webp}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
+        ],
+      },
+
+      manifest: {
+        name: "Wilan’s Week Planner",
+        short_name: "Wilan",
+        start_url: "/",
+        display: "standalone",
+        theme_color: "#F73486",
+        background_color: "#0f0f1a",
+        icons: [
+          { src: "/logo32x32.png", sizes: "32x32", type: "image/png" },
+          { src: "/logo192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/logo512x512.png", sizes: "512x512", type: "image/png" }
+        ]
       }
     })
   ]
